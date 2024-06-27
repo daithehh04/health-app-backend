@@ -2,10 +2,10 @@ const { SuccessResponse, CREATED } = require("../core/success.response.js")
 const UserService = require("../services/user.service");
 
 class UserController {
-  static getAllUsers = async (req,res) => {
+  static getAllUsers = async (req, res) => {
     new SuccessResponse({
       message: "Get all users Success!",
-      data: await UserService.getAllUsers(),
+      data: await UserService.getAllUsers(req?.query),
     }).send(res)
   }
 

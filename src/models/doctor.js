@@ -14,8 +14,9 @@ module.exports = (sequelize, DataTypes) => {
       Doctor.belongsTo(models.DoctorGroup, {
         foreignKey: "doctor_group_id",
         as: "doctor_group",
-      })
-
+      });
+      Doctor.belongsToMany(models.User, { through: models.BookAppointment, foreignKey: 'doctor_id', otherKey: 'user_id' });
+      Doctor.hasMany(models.BookAppointment, { foreignKey: 'doctor_id' });
     }
   }
   Doctor.init({
