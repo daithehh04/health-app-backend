@@ -18,7 +18,7 @@ class OrderController {
   static deleteOrder = async (req, res) => {
     new SuccessResponse({
       message: "Delete order Success!",
-      data: await OrderService.deleteOrder(req.query),
+      data: await OrderService.deleteOrder(req.params),
     }).send(res)
   }
 
