@@ -38,8 +38,10 @@ class BookAppointmentService {
                     exp: appointment.Doctor.exp,
                     price: appointment.Doctor.price,
                },
+               id: appointment.id,
                startTime: appointment.start_time,
                endTime: appointment.end_time,
+               status: appointment.status
 
           }));
           return {
