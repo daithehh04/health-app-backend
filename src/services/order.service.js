@@ -45,7 +45,8 @@ class CartService {
     const findCart = await Cart.findOne({
       where: {
         user_id,
-        product_id
+        product_id,
+        status: 'pending'
       },
     })
     let cart
