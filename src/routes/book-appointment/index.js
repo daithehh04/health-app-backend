@@ -6,5 +6,5 @@ const router = express.Router()
 
 router.get("/book-appointments", asyncHandler(BookAppointmentController.getAllBookAppointment))
 router.post("/book-appointments", asyncHandler(BookAppointmentController.createBookAppointment))
-
+router.patch("/book-appointments/:id", asyncHandler(BookAppointmentController.updatedBookAppointment))
 module.exports = router

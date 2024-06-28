@@ -1,6 +1,7 @@
 const { SuccessResponse, CREATED } = require("../core/success.response.js");
 const BookAppointmentService = require("../services/book-appointment.service.js");
 const { BookAppointment, Doctor, User } = require("../models/index");
+const isValidStatus = require("../utils/validStatus.js")
 const { Op } = require("sequelize");
 class BookAppointmentController {
      static getAllBookAppointment = async (req, res) => {
@@ -24,8 +25,17 @@ class BookAppointmentController {
                }
                const start = new Date(startTime);
                const end = new Date(endTime);
+               if (start < new Date()) {
+                    return res.status(400).json({ status: 400, message: "Thời gian bắt đầu phải lớn hơn hoặc bằng thời gian hiện tại!" });
+               }
                if (start >= end) {
                     return res.status(400).json({ status: 400, message: "Thời gian bắt đầu phải nhỏ hơn thời gian kết thúc!" });
+               }
+               console.log(end);
+               console.log(start);
+               console.log((end.getTime() - start.getTime() / 3600000))
+               if ((end.getTime() - start.getTime()) / 3600000 > 4) {
+                    return res.status(400).json({ status: 400, message: "Thời gian hẹn lịch tối đa là 3 giờ hoặc tối thiểu là 1 giờ" });
                }
                const existingAppointments = await BookAppointment.findOne({
                     where: {
@@ -66,10 +76,34 @@ class BookAppointmentController {
                          through:
                          {
                               start_time: startTime,
-                              end_time: endTime
+                              end_time: endTime,
+                              status: 'pending',
                          }
                     });
                response.status = 201;
+               response.message = "cập nhật thành công"
+
+          } catch (e) {
+               response.status = 500;
+               response.message = e?.message;
+          }
+          return res.status(response.status).send(response);
+     }
+     static updatedBookAppointment = async (req, res) => {
+          const { id } = req.params;
+          const { status } = req.body;
+          const response = {};
+          try {
+               const bookAppointment = await BookAppointment.findByPk(id);
+               if (!bookAppointment) {
+                    return res.status(404).json({ status: 404, message: "Lich hẹn không tồn tại!" });
+               }
+               if (!status || !isValidStatus(status)) {
+                    return res.status(400).json({ status: 404, message: "Trạng thái Đặt lịch không xác định!" });
+               }
+               bookAppointment.status = status;
+               bookAppointment.save();
+               response.status = 200;
                response.message = "Đặt lịch thành công"
 
           } catch (e) {
