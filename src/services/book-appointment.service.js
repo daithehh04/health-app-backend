@@ -10,7 +10,7 @@ class BookAppointmentService {
                          model: Doctor
                     },
                ],
-               order: [["created_at", "desc"]],
+               order: [["updated_at", "desc"]],
 
           }
           if (userId) {
