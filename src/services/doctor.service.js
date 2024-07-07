@@ -1,7 +1,8 @@
+const { Op } = require("sequelize");
 const { NotFoundError, BadRequestError } = require("../core/error.response")
 const { Doctor, DoctorGroup } = require("../models/index");
 class DoctorService {
-  static getAllDoctors = async ({ page, limit, doctorGroupId }) => {
+  static getAllDoctors = async ({ page, limit, keyword, doctorGroupId }) => {
     const options = {
       order: [["created_at", "desc"]],
 
@@ -10,6 +11,12 @@ class DoctorService {
       options.where = {
         doctor_group_id: doctorGroupId,
       }
+    }
+    if (keyword) {
+      options.where =
+        { name: { [Op.like]: `%${keyword}%` } }
+
+
     }
     if (!+page || page < 0) {
       page = 1
@@ -39,13 +46,39 @@ class DoctorService {
     if (!doctorGroup) {
       throw new NotFoundError("DoctorGroup không tồn tại!")
     }
-    const {
-      name, image, address, phone, exp, price, doctor_group_id,
-    } = payload;
     const doctor = await Doctor.create(payload)
     if (!doctor) throw new BadRequestError("Create Doctor error")
     return doctor
   }
+  static updatedDoctor = async ({ id }, payload) => {
+    const doctorGroup = await DoctorGroup.findByPk(payload.doctor_group_id);
+    const doctorFind = await Doctor.findByPk(id);
+    if (!doctorFind) {
+      throw new NotFoundError("Doctor không tồn tại!")
+    }
+    if (!doctorGroup) {
+      throw new NotFoundError("DoctorGroup không tồn tại!")
+    }
+    await Doctor.update(payload, {
+      where: {
+        id,
+      },
+    })
+
+  }
+  static deleteDoctor = async ({ id }) => {
+    const doctorFind = await Doctor.findByPk(id);
+    if (!doctorFind) {
+      throw new NotFoundError("Doctor không tồn tại!")
+    }
+    await Doctor.destroy({
+      where: {
+        id
+      },
+    })
+
+  }
+
 }
 
 module.exports = DoctorService

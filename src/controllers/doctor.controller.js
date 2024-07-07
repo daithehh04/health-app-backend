@@ -21,6 +21,18 @@ class DoctorController {
       data: await DoctorService.createDoctor(req.body),
     }).send(res)
   }
+  static updatedDoctor = async (req, res) => {
+    new CREATED({
+      message: "updated Doctor OK!",
+      data: await DoctorService.updatedDoctor(req.params, req.body),
+    }).send(res)
+  }
+  static deleteDoctor = async (req, res) => {
+    new CREATED({
+      message: "delete Doctor OK!",
+      data: await DoctorService.deleteDoctor(req.params),
+    }).send(res)
+  }
 }
 
 module.exports = DoctorController
