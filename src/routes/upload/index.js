@@ -1,10 +1,14 @@
-"use strict"
-const express = require("express")
-const asyncHandler = require("../../helpers/asyncHandler")
+"use strict";
+const express = require("express");
+const asyncHandler = require("../../helpers/asyncHandler");
 const upload = require("../../middlewares/multer");
-const UploadController = require("../../controllers/upload.controller")
-const router = express.Router()
+const UploadController = require("../../controllers/upload.controller");
+const router = express.Router();
 
-router.post("/image", upload.single('image'), UploadController.handleUploadImage)
+router.post(
+  "/image",
+  upload.single("image"),
+  UploadController.handleUploadImage
+);
 
-module.exports = router
+module.exports = router;

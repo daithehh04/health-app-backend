@@ -1,5 +1,5 @@
-"use strict"
-const { Model } = require("sequelize")
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Cart extends Model {
     /**
@@ -12,12 +12,7 @@ module.exports = (sequelize, DataTypes) => {
       Cart.belongsTo(models.User, {
         foreignKey: "user_id",
         as: "user",
-      })
-
-      Cart.belongsTo(models.Medicine, {
-        foreignKey: "product_id",
-        as: "medicine"
-      })
+      });
     }
   }
   Cart.init(
@@ -27,8 +22,11 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         autoIncrement: true,
       },
-      product_id: DataTypes.INTEGER,
       user_id: DataTypes.INTEGER,
+      product_id: DataTypes.INTEGER,
+      name: DataTypes.STRING,
+      description: DataTypes.STRING,
+      image: DataTypes.STRING,
       quantity: DataTypes.INTEGER,
       old_price: DataTypes.FLOAT,
       new_price: DataTypes.FLOAT,
@@ -41,6 +39,6 @@ module.exports = (sequelize, DataTypes) => {
       createdAt: "created_at",
       updatedAt: "updated_at",
     }
-  )
-  return Cart
-}
+  );
+  return Cart;
+};
