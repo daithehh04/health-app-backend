@@ -31,15 +31,19 @@ class BookAppointmentController {
                if (start >= end) {
                     return res.status(400).json({ status: 400, message: "Thời gian bắt đầu phải nhỏ hơn thời gian kết thúc!" });
                }
-               console.log(end);
-               console.log(start);
-               console.log((end.getTime() - start.getTime() / 3600000))
+               if ((end.getTime() - start.getTime()) / 3600000 < 1) {
+                    return res.status(400).json({ status: 400, message: "Thời gian hẹn lịch tối thiệu là 1 hoặc tối thiểu là 1 giờ" });
+               }
                if ((end.getTime() - start.getTime()) / 3600000 > 4) {
                     return res.status(400).json({ status: 400, message: "Thời gian hẹn lịch tối đa là 3 giờ hoặc tối thiểu là 1 giờ" });
                }
                const existingAppointments = await BookAppointment.findOne({
                     where: {
                          doctor_id: doctorId,
+                         status: {
+                              [Op.or]: ["pending"]
+                         }
+                         ,
                          [Op.or]: [
                               {
                                    start_time: {
