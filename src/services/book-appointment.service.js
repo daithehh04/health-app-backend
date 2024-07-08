@@ -1,14 +1,18 @@
 
 
+const { Op } = require("sequelize");
 const { NotFoundError, BadRequestError } = require("../core/error.response");
 const { BookAppointment, Doctor, User } = require("../models/index");
 class BookAppointmentService {
-     static getAllBookAppointment = async ({ page, limit, userId }) => {
+     static getAllBookAppointment = async ({ page, limit, userId, keyword }) => {
           const options = {
                include: [
                     {
                          model: Doctor
                     },
+                    {
+                         model: User
+                    }
                ],
                order: [["updated_at", "desc"]],
 
@@ -17,6 +21,18 @@ class BookAppointmentService {
                options.where = {
                     user_id: userId
                }
+          }
+          if (keyword) {
+               options.include.forEach(includeOption => {
+                    console.log("includeOption.model === Doctor", includeOption.model === Doctor)
+                    if (includeOption.model === Doctor && keyword) {
+                         includeOption.where = {
+                              name: {
+                                   [Op.iLike]: `%${keyword}%`
+                              }
+                         };
+                    }
+               });
           }
           if (!+page || page < 0) {
                page = 1
@@ -37,6 +53,11 @@ class BookAppointmentService {
                     phone: appointment.Doctor.phone,
                     exp: appointment.Doctor.exp,
                     price: appointment.Doctor.price,
+               },
+               user: {
+                    id: appointment.User.id,
+                    name: appointment.User.name,
+                    email: appointment.User.email
                },
                id: appointment.id,
                startTime: appointment.start_time,
