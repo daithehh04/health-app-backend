@@ -4,7 +4,6 @@ class CartService {
   static getAllOrders = async ({ page, limit, userId, status }) => {
     const options = {
       order: [["created_at", "desc"]],
-      where: { user_id: userId },
       include: [
         {
           model: User,
@@ -13,6 +12,9 @@ class CartService {
         },
       ],
     };
+    if (userId) {
+      options.where.user_id = userId;
+    }
     if (!+page || page < 0) {
       page = 1;
     }
