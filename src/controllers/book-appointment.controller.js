@@ -12,7 +12,6 @@ class BookAppointmentController {
      }
      static createBookAppointment = async (req, res) => {
           const { doctorId, userId, startTime, endTime } = req.body;
-          console.log('req.body', req.body);
           const response = {};
           try {
                const doctorFind = await Doctor.findByPk(doctorId);
@@ -75,15 +74,22 @@ class BookAppointmentController {
                if (existingAppointments) {
                     return res.status(409).json({ status: 409, message: "Bác sĩ đã có lịch hẹn trong khoảng thời gian này!" });
                }
-               await userFind.addDoctor(doctorFind,
-                    {
-                         through:
-                         {
-                              start_time: startTime,
-                              end_time: endTime,
-                              status: 'pending',
-                         }
-                    });
+               // await userFind.addDoctor(doctorFind,
+               //      {
+               //           through:
+               //           {
+               //                start_time: startTime,
+               //                end_time: endTime,
+               //                status: 'pending',
+               //           }
+               //      });
+               await BookAppointment.create({
+                    doctor_id: doctorId,
+                    user_id: userId,
+                    start_time: startTime,
+                    end_time: endTime,
+                    status: 'pending',
+               })
                response.status = 201;
                response.message = "cập nhật thành công"
 
@@ -109,6 +115,28 @@ class BookAppointmentController {
                bookAppointment.save();
                response.status = 200;
                response.message = "Đặt lịch thành công"
+
+          } catch (e) {
+               response.status = 500;
+               response.message = e?.message;
+          }
+          return res.status(response.status).send(response);
+     }
+     static deleteBookAppointment = async (req, res) => {
+          const { id } = req.params;
+          const response = {};
+          try {
+               const bookAppointment = await BookAppointment.findByPk(id);
+               if (!bookAppointment) {
+                    return res.status(404).json({ status: 404, message: "Lich hẹn không tồn tại!" });
+               }
+               await BookAppointment.destroy({
+                    where: {
+                         id
+                    },
+               })
+               response.status = 200;
+               response.message = "xóa thành công"
 
           } catch (e) {
                response.status = 500;

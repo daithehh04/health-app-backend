@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
           },
           user_id: DataTypes.INTEGER,
           doctor_id: DataTypes.INTEGER,
-          status: DataTypes.ENUM('pending', 'accepted', 'rejected'),
+          status: DataTypes.STRING,
           start_time: DataTypes.DATE,
           end_time: DataTypes.DATE
      }, {

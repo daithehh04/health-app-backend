@@ -14,7 +14,7 @@ class DoctorService {
     }
     if (keyword) {
       options.where =
-        { name: { [Op.like]: `%${keyword}%` } }
+        { name: { [Op.iLike]: `%${keyword}%` } }
 
 
     }
